@@ -1,90 +1,90 @@
 # Football Analysis Project
 
-Một hệ thống phân tích video bóng đá sử dụng AI để phát hiện, theo dõi cầu thủ và phân tích chiến thuật trận đấu.
+An AI-powered football video analysis system for player detection, tracking, and tactical analysis.
 
-## Tính năng chính
+## Key Features
 
-- **Phát hiện đối tượng**: Phát hiện cầu thủ, thủ môn, trọng tài và bóng trong video
-- **Theo dõi đối tượng**: Duy trì ID nhất quán cho các cầu thủ qua các khung hình
-- **Phân loại đội**: Tự động phân biệt hai đội dựa trên màu sắc áo đấu
-- **Phân tích kiểm soát bóng**: Tính toán phần trăm kiểm soát bóng của mỗi đội
-- **Thống kê chuyển động**: Theo dõi khoảng cách di chuyển và vùng hoạt động của cầu thủ
-- **Phân tích đội hình**: Theo dõi vị trí và chiến thuật của đội
+- **Object Detection**: Detect players, goalkeepers, referees, and ball in video footage
+- **Object Tracking**: Maintain consistent IDs for players across video frames
+- **Team Classification**: Automatically distinguish between two teams based on jersey colors
+- **Ball Possession Analysis**: Calculate ball possession percentages for each team
+- **Movement Statistics**: Track player movement distance and activity zones
+- **Formation Analysis**: Monitor team positions and tactical patterns
 
-## Cấu trúc dự án
+## Project Structure
 
 ```
 FootBall-Detection/
-├── main.py                 # Tệp chính để chạy phân tích
-├── config.py              # Cấu hình và hằng số
-├── video_processor.py     # Xử lý video và phát hiện đối tượng
-├── analysis.py            # Phân tích kiểm soát bóng và thống kê
-├── requirements.txt       # Danh sách thư viện cần thiết
-├── TODO.md               # Kế hoạch cải tiến dự án
-├── README.md             # Tài liệu hướng dẫn (tệp này)
-└── Scout_Football.ipynb  # Notebook gốc (để tham khảo)
+├── main.py                 # Main script to run analysis
+├── config.py              # Configuration and constants
+├── video_processor.py     # Video processing and object detection
+├── analysis.py            # Ball possession and statistics analysis
+├── requirements.txt       # Required dependencies
+├── TODO.md               # Project improvement roadmap
+├── README.md             # Documentation (this file)
+└── Scout_Football.ipynb  # Original notebook (for reference)
 ```
 
-## Cài đặt
+## Installation
 
-### 1. Cài đặt thư viện cơ bản
+### 1. Install Basic Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Cài đặt thư viện Sports từ Roboflow
+### 2. Install Sports Library from Roboflow
 
 ```bash
 pip install git+https://github.com/roboflow/sports.git
 ```
 
-### 3. Thiết lập API Key
+### 3. Setup API Key
 
-Cần có Roboflow API key để sử dụng các mô hình phát hiện:
+You need a Roboflow API key to use the detection models:
 
-#### Trên Google Colab:
+#### On Google Colab:
 
 ```python
 from google.colab import userdata
-# Thêm ROBOFLOW_API_KEY vào Colab Secrets
+# Add ROBOFLOW_API_KEY to Colab Secrets
 ```
 
-#### Trên máy tính cá nhân:
+#### On Local Machine:
 
 ```bash
 export ROBOFLOW_API_KEY="your_api_key_here"
 ```
 
-## Sử dụng
+## Usage
 
-### Chạy phân tích cơ bản
+### Run Basic Analysis
 
 ```python
 python main.py
 ```
 
-### Tùy chỉnh đường dẫn video
+### Customize Video Paths
 
-Chỉnh sửa tệp `config.py`:
+Edit the `config.py` file:
 
 ```python
 SOURCE_VIDEO_PATH = "path/to/your/video.mp4"
 OUTPUT_VIDEO_PATH = "path/to/output/video.mp4"
 ```
 
-### Sử dụng các module riêng lẻ
+### Using Individual Modules
 
-#### Xử lý video
+#### Video Processing
 
 ```python
 from video_processor import VideoProcessor
 from config import *
 
-# Khởi tạo processor
+# Initialize processor
 processor = VideoProcessor(detection_model)
 
-# Xử lý video
+# Process video
 processor.process_video(
     video_path="input.mp4",
     output_path="output.mp4",
@@ -92,55 +92,55 @@ processor.process_video(
 )
 ```
 
-#### Phân tích kiểm soát bóng
+#### Ball Possession Analysis
 
 ```python
 from analysis import BallPossessionAnalyzer
 
 analyzer = BallPossessionAnalyzer()
 
-# Cập nhật trong vòng lặp xử lý frame
+# Update in frame processing loop
 possession = analyzer.update_possession(
     ball_detections, player_detections, player_team_ids, frame_number
 )
 
-# Lấy thống kê cuối cùng
+# Get final statistics
 percentages = analyzer.get_possession_percentages(total_frames)
 ```
 
-## Cấu hình
+## Configuration
 
-### Tham số chính trong `config.py`
+### Main Parameters in `config.py`
 
-- `CONFIDENCE_THRESHOLD`: Ngưỡng tin cậy cho phát hiện đối tượng (mặc định: 0.3)
-- `NMS_THRESHOLD`: Ngưỡng Non-Maximum Suppression (mặc định: 0.5)
-- `TEAM_CLASSIFICATION_INTERVAL`: Khoảng cách frame để phân loại lại đội (mặc định: 30)
-- `BALL_CONTROL_DISTANCE_THRESHOLD`: Khoảng cách để xác định kiểm soát bóng (mặc định: 50)
+- `CONFIDENCE_THRESHOLD`: Confidence threshold for object detection (default: 0.3)
+- `NMS_THRESHOLD`: Non-Maximum Suppression threshold (default: 0.5)
+- `TEAM_CLASSIFICATION_INTERVAL`: Frame interval for team re-classification (default: 30)
+- `BALL_CONTROL_DISTANCE_THRESHOLD`: Distance threshold for ball possession (default: 50)
 
-### Màu sắc
+### Colors
 
-Các màu sắc cho đội và đối tượng được định nghĩa trong `COLORS` dictionary:
+Team and object colors are defined in the `COLORS` dictionary:
 
 ```python
 COLORS = {
-    'team_0_players': '#00BFFF',      # Xanh cho đội 0
-    'team_1_players': '#FF1493',      # Hồng cho đội 1
-    'team_0_goalkeeper': '#32CD32',   # Xanh lá cho thủ môn đội 0
-    'team_1_goalkeeper': '#FF0000',   # Đỏ cho thủ môn đội 1
-    'referee': '#000000',             # Đen cho trọng tài
-    'ball': '#FFD700',                # Vàng cho bóng
+    'team_0_players': '#00BFFF',      # Blue for team 0
+    'team_1_players': '#FF1493',      # Pink for team 1
+    'team_0_goalkeeper': '#32CD32',   # Green for team 0 goalkeeper
+    'team_1_goalkeeper': '#FF0000',   # Red for team 1 goalkeeper
+    'referee': '#000000',             # Black for referees
+    'ball': '#FFD700',                # Gold for ball
 }
 ```
 
 ## Output
 
-Dự án tạo ra:
+The project generates:
 
-1. **Video đã chú thích**: Video với bounding box, ID cầu thủ và thông tin kiểm soát bóng
-2. **Log file**: `football_analysis.log` chứa thông tin chi tiết về quá trình xử lý
-3. **Thống kê cuối cùng**: In ra console và log file
+1. **Annotated Video**: Video with bounding boxes, player IDs, and ball possession information
+2. **Log File**: `football_analysis.log` containing detailed processing information
+3. **Final Statistics**: Printed to console and log file
 
-### Ví dụ output thống kê:
+### Example Statistics Output:
 
 ```
 Team 0 possession: 52.3%
@@ -148,31 +148,31 @@ Team 1 possession: 47.7%
 Total possession switches: 23
 ```
 
-## Tối ưu hóa hiệu suất
+## Performance Optimization
 
 ### GPU
 
-Dự án được tối ưu cho GPU. Đảm bảo có:
+The project is optimized for GPU usage. Ensure you have:
 
-- CUDA được cài đặt
-- PyTorch với CUDA support
+- CUDA installed
+- PyTorch with CUDA support
 - ONNX Runtime GPU
 
-### Bộ nhớ
+### Memory
 
-Để xử lý video lớn:
+For processing large videos:
 
-- Giảm `BATCH_SIZE` trong config nếu thiếu GPU memory
-- Tăng `STRIDE` để xử lý ít frame hơn khi training team classifier
+- Reduce `BATCH_SIZE` in config if running out of GPU memory
+- Increase `STRIDE` to process fewer frames during team classifier training
 
 ## Troubleshooting
 
-### Lỗi thường gặp
+### Common Issues
 
 1. **"Roboflow API key not found"**
 
-   - Kiểm tra API key đã được set chính xác
-   - Đảm bảo có quyền truy cập model
+   - Check that API key is set correctly
+   - Ensure you have access to the model
 
 2. **"Could not import sports library"**
 
@@ -182,33 +182,33 @@ Dự án được tối ưu cho GPU. Đảm bảo có:
 
 3. **CUDA errors**
 
-   - Kiểm tra CUDA compatibility
-   - Đổi `DEVICE = "cpu"` trong config.py nếu cần
+   - Check CUDA compatibility
+   - Set `DEVICE = "cpu"` in config.py if needed
 
 4. **Memory errors**
-   - Giảm batch size
-   - Xử lý video ngắn hơn để test
+   - Reduce batch size
+   - Process shorter videos for testing
 
 ### Logging
 
-Kiểm tra file log `football_analysis.log` để debug:
+Check the log file `football_analysis.log` for debugging:
 
 ```bash
 tail -f football_analysis.log
 ```
 
-## Đóng góp
+## Contributing
 
-1. Fork repository
-2. Tạo feature branch
-3. Commit changes
-4. Push to branch
-5. Tạo Pull Request
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
 ## License
 
-Dự án sử dụng các thư viện mã nguồn mở. Xem tệp requirements.txt để biết chi tiết.
+This project uses open-source libraries. See requirements.txt for details.
 
-## Liên hệ
+## Contact
 
-Nếu có vấn đề hoặc câu hỏi, vui lòng tạo issue trên GitHub repository.
+If you have any issues or questions, please create an issue on the GitHub repository.
